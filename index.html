@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Particles Animation</title>
+
+  <!-- Three.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+  <!-- MediaPipe -->
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
+
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      background: #000;
+      font-family: Arial, sans-serif;
+    }
+
+    #webcam-preview {
+      position: absolute;
+      right: 10px;
+      bottom: 10px;
+      width: 200px;
+      border: 2px solid #fff;
+      border-radius: 8px;
+      z-index: 50;
+    }
+
+    #status {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      font-size: 20px;
+      color: #fff;
+      z-index: 100;
+    }
+
+    #ui-container {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      z-index: 20;
+    }
+
+    #colorPicker {
+      width: 80px;
+      height: 40px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="status">Initializing...</div>
+
+  <video id="webcam-preview" autoplay></video>
+
+  <div id="ui-container">
+    <input type="color" id="colorPicker" value="#00d2ff">
+  </div>
+
+  <!-- Vertex Shader -->
+  <script id="vertexshader" type="x-shader/x-vertex">
+    uniform float time;
+    uniform float expansion;
+    uniform float scaleGlobal;
+    uniform float transition;
+    uniform float size;
+    attribute vec3 targetPosition;
+
+    void main() {
+      vec3 newPos = mix(position, targetPosition, transition);
+      newPos += normalize(newPos) * expansion * 4.0;
+      newPos *= scaleGlobal;
+
+      gl_PointSize = size;
+      gl_Position = projectionMatrix * modelViewMatrix * vec4(newPos, 1.0);
+    }
+  </script>
+
+  <!-- Fragment Shader -->
+  <script id="fragmentshader" type="x-shader/x-fragment">
+    uniform vec3 colorValue;
+
+    void main() {
+      gl_FragColor = vec4(colorValue, 1.0);
+    }
+  </script>
+
+  <!-- Your JS file -->
+  <script src="script.js"></script>
+
+</body>
+</html>
